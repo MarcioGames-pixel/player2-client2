@@ -1,0 +1,19 @@
+[remap]
+
+importer="wavefront_obj"
+type="Mesh"
+path="res://.import/placeholder.obj-29fce8fb599888147e87215c3814072a.mesh"
+
+[deps]
+
+files=[ "res://.import/placeholder.obj-29fce8fb599888147e87215c3814072a.mesh" ]
+
+source_file="res://prefabs/avatar/placeholder.obj"
+dest_files=[ "res://.import/placeholder.obj-29fce8fb599888147e87215c3814072a.mesh", "res://.import/placeholder.obj-29fce8fb599888147e87215c3814072a.mesh" ]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3( 1, 1, 1 )
+offset_mesh=Vector3( 0, 0, 0 )
+optimize_mesh=true

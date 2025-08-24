@@ -1,0 +1,28 @@
+[gd_resource type="ShaderMaterial" load_steps=3 format=2]
+
+[ext_resource path="res://prefabs/avatar/default_face.png" type="Texture" id=1]
+
+[sub_resource type="Shader" id=1]
+resource_local_to_scene = true
+code = "shader_type spatial;
+render_mode blend_mix, depth_draw_opaque, cull_back, diffuse_burley, specular_schlick_ggx;
+
+uniform vec4 tint : hint_color;
+uniform bool face_enabled = false;
+uniform sampler2D face : hint_albedo;
+
+void fragment() {
+	if (face_enabled) {
+		vec4 tex = texture(face, UV);
+		ALBEDO = mix(tex.rgb, tint.rgb, 1.0 - tex.a);
+	} else {
+		ALBEDO = tint.rgb;
+	}
+}
+"
+
+[resource]
+shader = SubResource( 1 )
+shader_param/tint = Color( 0.952941, 0.717647, 0, 1 )
+shader_param/face_enabled = true
+shader_param/face = ExtResource( 1 )

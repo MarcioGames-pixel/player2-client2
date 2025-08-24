@@ -1,0 +1,33 @@
+[gd_resource type="ShaderMaterial" load_steps=4 format=2]
+
+[ext_resource path="res://prefabs/brick_system/texture/stud_top.png" type="Texture" id=1]
+[ext_resource path="res://prefabs/brick_system/texture/stud_bottom.png" type="Texture" id=2]
+
+[sub_resource type="Shader" id=1]
+code = "shader_type spatial;
+render_mode blend_mix, depth_draw_opaque, cull_back, diffuse_burley, specular_schlick_ggx;
+uniform sampler2D studs_top : hint_albedo;
+uniform sampler2D studs_bottom : hint_albedo;
+
+void vertex() {
+	if (!OUTPUT_IS_SRGB) {
+		COLOR.rgb = mix(pow((COLOR.rgb + vec3(0.055)) * (1.0 / (1.0 + 0.055)), vec3(2.4)), COLOR.rgb * (1.0 / 12.92), lessThan(COLOR.rgb, vec3(0.04045)));
+	}
+}
+
+void fragment() {
+	ALBEDO = COLOR.rgb;
+	if (NORMAL.y > 0.0) {
+		vec4 tex = texture(studs_top, UV);
+		ALBEDO *= tex.rgb;
+	} else if (NORMAL.y < 0.0) {
+		vec4 tex = texture(studs_bottom, UV);
+		ALBEDO *= tex.rgb;
+	}
+}
+"
+
+[resource]
+shader = SubResource( 1 )
+shader_param/studs_top = ExtResource( 1 )
+shader_param/studs_bottom = ExtResource( 2 )

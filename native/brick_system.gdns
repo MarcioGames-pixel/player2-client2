@@ -1,0 +1,27 @@
+[gd_resource type="NativeScript" load_steps=2 format=2]
+
+[sub_resource type="GDNativeLibrary" id=1]
+entry/Android.armeabi-v7a = "res://native/android/armeabi-v7a/libbrick_system.so"
+entry/Android.arm64-v8a = "res://native/android/arm64-v8a/libbrick_system.so"
+entry/Android.x86 = "res://native/android/x86/libbrick_system.so"
+entry/Android.x86_64 = "res://native/android/x86_64/libbrick_system.so"
+entry/OSX.64 = "res://native/osx/arm64/libbrick_system.dylib"
+entry/OSX.arm64 = "res://native/osx/arm64/libbrick_system.dylib"
+entry/Windows.64 = "res://native/windows/x86_64/brick_system.dll"
+entry/iOS.armv7 = "res://native/ios/libbrick_system.a"
+entry/iOS.arm64 = "res://native/ios/libbrick_system.a"
+entry/iOS.x86_64 = "res://native/ios/libbrick_system.a"
+dependency/Android.armeabi-v7a = [  ]
+dependency/Android.arm64-v8a = [  ]
+dependency/Android.x86 = [  ]
+dependency/Android.x86_64 = [  ]
+dependency/OSX.64 = [  ]
+dependency/OSX.arm64 = [  ]
+dependency/Windows.64 = [  ]
+dependency/iOS.armv7 = [  ]
+dependency/iOS.arm64 = [  ]
+dependency/iOS.x86_64 = [  ]
+
+[resource]
+class_name = "BrickSystem"
+library = SubResource( 1 )

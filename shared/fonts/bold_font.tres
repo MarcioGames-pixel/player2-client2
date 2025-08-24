@@ -1,0 +1,9 @@
+[gd_resource type="DynamicFont" load_steps=2 format=2]
+
+[ext_resource path="res://shared/fonts/lato_black.ttf" type="DynamicFontData" id=1]
+
+[resource]
+outline_size = 1
+outline_color = Color( 0.282353, 0.282353, 0.282353, 0.8 )
+use_filter = true
+font_data = ExtResource( 1 )

@@ -1,0 +1,198 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
+
+config_version=4
+
+_global_script_classes=[ {
+"base": "StreamPeerBuffer",
+"class": "AdaptedPacket",
+"language": "GDScript",
+"path": "res://prefabs/net/adapted_packet.gd"
+}, {
+"base": "Spatial",
+"class": "Avatar",
+"language": "GDScript",
+"path": "res://prefabs/avatar/avatar.gd"
+}, {
+"base": "Spatial",
+"class": "Bot",
+"language": "GDScript",
+"path": "res://prefabs/bot/bot.gd"
+}, {
+"base": "WorldEnvironment",
+"class": "BrickSky",
+"language": "GDScript",
+"path": "res://prefabs/brick_sky/brick_sky.gd"
+}, {
+"base": "Control",
+"class": "GameUI",
+"language": "GDScript",
+"path": "res://prefabs/game_ui/game_ui.gd"
+}, {
+"base": "Control",
+"class": "Joystick",
+"language": "GDScript",
+"path": "res://prefabs/joystick/joystick.gd"
+}, {
+"base": "Position3D",
+"class": "NametagInstance",
+"language": "GDScript",
+"path": "res://prefabs/nametag/nametag_instance.gd"
+}, {
+"base": "Control",
+"class": "NametagManager",
+"language": "GDScript",
+"path": "res://prefabs/nametag/nametag_manager.gd"
+}, {
+"base": "Node",
+"class": "Net",
+"language": "GDScript",
+"path": "res://prefabs/net/net.gd"
+}, {
+"base": "Node",
+"class": "PacketUtil",
+"language": "GDScript",
+"path": "res://prefabs/net/packet_util.gd"
+}, {
+"base": "KinematicBody",
+"class": "PlayerBase",
+"language": "GDScript",
+"path": "res://prefabs/player/player_base.gd"
+}, {
+"base": "PlayerBase",
+"class": "PlayerLocal",
+"language": "GDScript",
+"path": "res://prefabs/player/player_local.gd"
+}, {
+"base": "PlayerBase",
+"class": "PlayerRemote",
+"language": "GDScript",
+"path": "res://prefabs/player/player_remote.gd"
+}, {
+"base": "RichTextLabel",
+"class": "PrintOut",
+"language": "GDScript",
+"path": "res://prefabs/game_ui/print_out.gd"
+}, {
+"base": "Button",
+"class": "ToggleArrow",
+"language": "GDScript",
+"path": "res://prefabs/toggle_arrow/toggle_arrow.gd"
+}, {
+"base": "Panel",
+"class": "ToolSelect",
+"language": "GDScript",
+"path": "res://prefabs/game_ui/tool_select.gd"
+} ]
+_global_script_class_icons={
+"AdaptedPacket": "",
+"Avatar": "",
+"Bot": "",
+"BrickSky": "",
+"GameUI": "",
+"Joystick": "",
+"NametagInstance": "",
+"NametagManager": "",
+"Net": "",
+"PacketUtil": "",
+"PlayerBase": "",
+"PlayerLocal": "",
+"PlayerRemote": "",
+"PrintOut": "",
+"ToggleArrow": "",
+"ToolSelect": ""
+}
+
+[application]
+
+config/name="Player2"
+run/main_scene="res://scenes/start/start.tscn"
+config/use_custom_user_dir=true
+config/custom_user_dir_name="player2"
+boot_splash/image="res://assets/icon_splash.png"
+boot_splash/fullsize=false
+boot_splash/bg_color=Color( 0.866667, 0.866667, 0.866667, 1 )
+config/icon="res://assets/icon.png"
+
+[autoload]
+
+BrickHill="*res://singletons/brick_hill.gd"
+Loader="*res://singletons/loader.gd"
+NetID="*res://singletons/net_id.gd"
+Miniz="*res://native/gd_miniz.gdns"
+Util="*res://singletons/util.gd"
+AssetCache="*res://singletons/asset_cache.gd"
+DiscordIntegrator="*res://native/discord_integrator.gdns"
+
+[display]
+
+window/vsync/use_vsync=false
+window/stretch/aspect="expand"
+window/stretch/mode.mobile="2d"
+window/vsync/use_vsync.mobile=true
+
+[gdnative]
+
+singletons=[  ]
+
+[input]
+
+move_forward={
+"deadzone": 0.5,
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":87,"physical_scancode":0,"unicode":0,"echo":false,"script":null)
+ ]
+}
+move_left={
+"deadzone": 0.5,
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":65,"physical_scancode":0,"unicode":0,"echo":false,"script":null)
+ ]
+}
+move_backward={
+"deadzone": 0.5,
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":83,"physical_scancode":0,"unicode":0,"echo":false,"script":null)
+ ]
+}
+move_right={
+"deadzone": 0.5,
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":68,"physical_scancode":0,"unicode":0,"echo":false,"script":null)
+ ]
+}
+jump={
+"deadzone": 0.5,
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":32,"physical_scancode":0,"unicode":0,"echo":false,"script":null)
+ ]
+}
+
+[input_devices]
+
+pointing/emulate_touch_from_mouse=true
+
+[layer_names]
+
+3d_physics/layer_1="Players"
+3d_physics/layer_2="Bricks"
+
+[network]
+
+limits/tcp/connect_timeout_seconds=15
+
+[physics]
+
+3d/physics_engine="GodotPhysics"
+3d/active_soft_world=false
+
+[rendering]
+
+quality/driver/fallback_to_gles2=true
+vram_compression/import_etc=true
+vram_compression/import_pvrtc=true
+quality/filters/use_nearest_mipmap_filter=true
+quality/filters/msaa=2
+quality/filters/use_debanding=true
+environment/default_environment="res://default_env.tres"
+environment/bg_color=Color( 0.866667, 0.866667, 0.866667, 1 )

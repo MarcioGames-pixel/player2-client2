@@ -1,0 +1,28 @@
+[gd_resource type="NativeScript" load_steps=2 format=2]
+
+[sub_resource type="GDNativeLibrary" id=1]
+entry/Android.armeabi-v7a = "res://native/android/armeabi-v7a/libgodot_miniz.so"
+entry/Android.arm64-v8a = "res://native/android/arm64-v8a/libgodot_miniz.so"
+entry/Android.x86 = "res://native/android/x86/libgodot_miniz.so"
+entry/Android.x86_64 = "res://native/android/x86_64/libgodot_miniz.so"
+entry/OSX.64 = "res://native/osx/arm64/libgodot_miniz.dylib"
+entry/OSX.arm64 = "res://native/osx/arm64/libgodot_miniz.dylib"
+entry/Windows.64 = "res://native/windows/x86_64/godot_miniz.dll"
+entry/iOS.armv7 = "res://native/ios/libgodot_miniz.a"
+entry/iOS.arm64 = "res://native/ios/libgodot_miniz.a"
+entry/iOS.x86_64 = "res://native/ios/libgodot_miniz.a"
+dependency/Android.armeabi-v7a = [  ]
+dependency/Android.arm64-v8a = [  ]
+dependency/Android.x86 = [  ]
+dependency/Android.x86_64 = [  ]
+dependency/OSX.64 = [  ]
+dependency/OSX.arm64 = [  ]
+dependency/Windows.64 = [  ]
+dependency/iOS.armv7 = [  ]
+dependency/iOS.arm64 = [  ]
+dependency/iOS.x86_64 = [  ]
+
+[resource]
+resource_name = "Miniz"
+class_name = "Miniz"
+library = SubResource( 1 )

@@ -1,0 +1,13 @@
+[gd_resource type="NativeScript" load_steps=2 format=2]
+
+[sub_resource type="GDNativeLibrary" id=1]
+entry/OSX.64 = "res://native/osx/arm64/libbh_discord.dylib"
+entry/OSX.arm64 = "res://native/osx/arm64/libbh_discord.dylib"
+entry/Windows.64 = "res://native/windows/x86_64/bh_discord.dll"
+dependency/OSX.64 = [  ]
+dependency/OSX.arm64 = [  ]
+dependency/Windows.64 = [ "res://native/x86_64/discord_game_sdk.dll" ]
+
+[resource]
+class_name = "DiscordIntegrator"
+library = SubResource( 1 )

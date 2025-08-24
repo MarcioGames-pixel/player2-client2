@@ -1,0 +1,21 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://scenes/start/start.gd" type="Script" id=1]
+[ext_resource path="res://shared/prominent_theme.tres" type="Theme" id=2]
+
+[node name="Start" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme = ExtResource( 2 )
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Backdrop" type="ColorRect" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color( 0.866667, 0.866667, 0.866667, 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}

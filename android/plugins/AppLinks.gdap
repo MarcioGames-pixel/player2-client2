@@ -1,0 +1,5 @@
+[config]
+
+name="AppLinks"
+binary_type="local"
+binary="AppLinks.aar"

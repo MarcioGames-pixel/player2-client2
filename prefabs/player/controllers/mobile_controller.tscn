@@ -1,0 +1,76 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://prefabs/player/controllers/mobile_controller.gd" type="Script" id=1]
+[ext_resource path="res://prefabs/player/controllers/mobile_camera.gd" type="Script" id=2]
+[ext_resource path="res://prefabs/dragpad/dragpad.tscn" type="PackedScene" id=3]
+[ext_resource path="res://prefabs/player/controllers/jump.png" type="Texture" id=4]
+
+[sub_resource type="RayShape" id=1]
+
+[node name="MobileController" type="Spatial"]
+script = ExtResource( 1 )
+
+[node name="MobileCamera" type="Position3D" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.5, 0 )
+script = ExtResource( 2 )
+
+[node name="SpringArm" type="SpringArm" parent="MobileCamera"]
+transform = Transform( -1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 0, 0, 0 )
+shape = SubResource( 1 )
+spring_length = 8.0
+margin = 0.05
+
+[node name="Camera" type="Camera" parent="MobileCamera/SpringArm"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 8 )
+current = true
+far = 8192.0
+
+[node name="UI" type="Control" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Jump" type="Control" parent="UI"]
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = -160.0
+margin_top = -160.0
+margin_right = -64.0
+margin_bottom = -64.0
+
+[node name="JumpInput" type="TouchScreenButton" parent="UI/Jump"]
+normal = ExtResource( 4 )
+
+[node name="DragInputs" type="HBoxContainer" parent="UI"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+custom_constants/separation = 0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Walk" parent="UI/DragInputs" instance=ExtResource( 3 )]
+margin_right = 512.0
+margin_bottom = 600.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Camera" parent="UI/DragInputs" instance=ExtResource( 3 )]
+margin_left = 512.0
+margin_right = 1024.0
+margin_bottom = 600.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+use_indicator = false
+
+[connection signal="drag_end" from="UI/DragInputs/Walk" to="." method="_on_walk_input_end"]
+[connection signal="drag_factor" from="UI/DragInputs/Walk" to="." method="_on_walk_input_factor"]
+[connection signal="drag_start" from="UI/DragInputs/Walk" to="." method="_on_walk_input_start"]
+[connection signal="drag_end" from="UI/DragInputs/Camera" to="." method="_on_camera_input_end"]
+[connection signal="drag_relative" from="UI/DragInputs/Camera" to="." method="_on_camera_input_relative"]

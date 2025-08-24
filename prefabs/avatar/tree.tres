@@ -1,0 +1,58 @@
+[gd_resource type="AnimationNodeBlendTree" load_steps=9 format=2]
+
+[sub_resource type="AnimationNodeAnimation" id=1]
+animation = "figure_fall-loop"
+
+[sub_resource type="AnimationNodeAnimation" id=2]
+animation = "figure_idle-loop"
+
+[sub_resource type="AnimationNodeAnimation" id=3]
+animation = "figure_jump"
+
+[sub_resource type="AnimationNodeAnimation" id=4]
+animation = "figure_land"
+
+[sub_resource type="AnimationNodeAnimation" id=5]
+animation = "figure_tool"
+
+[sub_resource type="AnimationNodeAnimation" id=6]
+animation = "figure_walk-loop"
+
+[sub_resource type="AnimationNodeTransition" id=7]
+input_count = 5
+xfade_time = 0.2
+input_0/name = "idle"
+input_0/auto_advance = false
+input_1/name = "walk"
+input_1/auto_advance = false
+input_2/name = "jump"
+input_2/auto_advance = false
+input_3/name = "falling"
+input_3/auto_advance = false
+input_4/name = "land"
+input_4/auto_advance = false
+
+[sub_resource type="AnimationNodeBlend2" id=8]
+filter_enabled = true
+filters = [ "FigureArmature/Skeleton:R_arm" ]
+
+[resource]
+graph_offset = Vector2( -454, 38.25 )
+nodes/anim_falling/node = SubResource( 1 )
+nodes/anim_falling/position = Vector2( -280, 340 )
+nodes/anim_idle/node = SubResource( 2 )
+nodes/anim_idle/position = Vector2( -280, -20 )
+nodes/anim_jump/node = SubResource( 3 )
+nodes/anim_jump/position = Vector2( -260, 220 )
+nodes/anim_landing/node = SubResource( 4 )
+nodes/anim_landing/position = Vector2( -240, 460 )
+nodes/anim_tool/node = SubResource( 5 )
+nodes/anim_tool/position = Vector2( 100, 340 )
+nodes/anim_walk/node = SubResource( 6 )
+nodes/anim_walk/position = Vector2( -280, 100 )
+nodes/current_state/node = SubResource( 7 )
+nodes/current_state/position = Vector2( 100, 80 )
+nodes/figure_tool/node = SubResource( 8 )
+nodes/figure_tool/position = Vector2( 320, 60 )
+nodes/output/position = Vector2( 540, 60 )
+node_connections = [ "output", 0, "figure_tool", "current_state", 0, "anim_idle", "current_state", 1, "anim_walk", "current_state", 2, "anim_jump", "current_state", 3, "anim_falling", "current_state", 4, "anim_landing", "figure_tool", 0, "current_state", "figure_tool", 1, "anim_tool" ]

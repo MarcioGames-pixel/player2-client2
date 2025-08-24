@@ -1,0 +1,26 @@
+extends Node
+
+const OUTGOING_AUTH: int = 1
+const OUTGOING_PLAYER_UPDATE: int = 2
+const OUTGOING_COMMAND: int = 3
+const OUTGOING_PROJECTILE: int = 4
+const OUTGOING_BRICK_CLICK: int = 5
+const OUTGOING_INPUT: int = 6
+const OUTGOING_HEARTBEAT: int = 18
+
+const INCOMING_AUTHENTICATION: int = 1
+const INCOMING_SEND_BRICK: int = 2
+const INCOMING_SEND_PLAYERS: int = 3
+const INCOMING_FIGURE: int = 4
+const INCOMING_REMOVE_PLAYER: int = 5
+const INCOMING_CHAT: int = 6
+const INCOMING_SETTING: int = 7
+const INCOMING_KILL: int = 8
+const INCOMING_BRICK: int = 9
+const INCOMING_TEAM: int = 10
+const INCOMING_TOOL: int = 11
+const INCOMING_BOT: int = 12
+const INCOMING_CLEAR_MAP: int = 14
+const INCOMING_DELETE_BOT: int = 15
+const INCOMING_DELETE_BRICK: int = 16
+const INCOMING_SEND_BRICK_BINARY: int = 17
