@@ -135,7 +135,7 @@ jobs:
           key: godot-${{ env.GODOT_VERSION }}-android-templates
 
       - name: "🤖 Download Godot Engine Binaries & Templates"
-        if: steps:cache-godot.outputs.cache-hit != 'true'
+        if: steps.cache-godot.outputs.cache-hit != 'true'
         run: |
           echo "Baixando binários headless da Godot Engine v${{ env.GODOT_VERSION }}..."
           wget https://tuxfamily.org{{ env.GODOT_VERSION }}/Godot_v${{ env.GODOT_VERSION }}-stable_linux_headless.64.zip
@@ -251,8 +251,8 @@ jobs:
           prerelease: false
           files: |
             dist/Player2-Mobile.apk
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+         env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
             # ==========================================
   # FASE 5: NOTIFICAÇÃO E MONITORAMENTO DE SAÚDE
