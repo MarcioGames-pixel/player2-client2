@@ -1,0 +1,27 @@
+name: "Compilar Player2 APK"
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch: # Permite que você clique em um botão para compilar manualmente
+
+jobs:
+  export_android:
+    name: Build Android APK
+    runs-on: ubuntu-latest
+    steps:
+      - name: Baixar Código Fonte
+        uses: actions/checkout@v4
+
+      - name: Exportar Godot para Android APK
+        uses: dulvui/godot-android-export@v3.0.0
+        with:
+          godot-version: '3.5.3' # Versão estável da Godot compatível com o projeto original
+          working-directory: '.' # O projeto está na raiz do repositório
+
+      - name: Salvar o APK Gerado
+        uses: actions/upload-artifact@v4
+        with:
+          name: Player2-Android-APK
+          path: '**/*.apk' # Captura o arquivo .apk de debug gerado pelo sistema
+          
