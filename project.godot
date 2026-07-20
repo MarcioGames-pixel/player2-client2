@@ -124,10 +124,8 @@ config/icon="res://assets/icon.png"
 BrickHill="*res://singletons/brick_hill.gd"
 Loader="*res://singletons/loader.gd"
 NetID="*res://singletons/net_id.gd"
-Miniz="*res://native/gd_miniz.gdns"
 Util="*res://singletons/util.gd"
-AssetCache="*res://singletons/asset_cache.gd"
-DiscordIntegrator="*res://native/discord_integrator.gdns"
+AssetCache="*res://singletons/asset_cache.gd""
 
 [display]
 
