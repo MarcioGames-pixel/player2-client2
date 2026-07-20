@@ -74,26 +74,27 @@ jobs:
           -keypass android \
           -dname "CN=Player2,O=BrickHill"
 
-      - name: "⬇️ Baixar Godot"
-     run: |
-        wget -O godot.zip https://github.com/godotengine/godot/releases/download/3.5.3-stable/Godot_v3.5.3-stable_linux_headless.64.zip
+            - name: "⬇️ Baixar Godot"
+    run: |
+          wget -O godot.zip https://github.com/godotengine/godot/releases/download/3.5.3-stable/Godot_v3.5.3-stable_linux_headless.64.zip
 
-        unzip godot.zip
+          unzip godot.zip
 
-        mv Godot_v3.5.3-stable_linux_headless.64 godot
+          mv Godot_v3.5.3-stable_linux_headless.64 godot
 
-        chmod +x godot
-    
-        - name: "⬇️ Baixar Templates Android"
-  run: |
-    wget -O templates.tpz https://github.com/godotengine/godot/releases/download/3.5.3-stable/Godot_v3.5.3-stable_export_templates.tpz
+          chmod +x godot
 
-    mkdir -p ~/.local/share/godot/templates/3.5.3.stable
 
-    unzip templates.tpz
+          - name: "⬇️ Baixar Templates Android"
+    run: |
+          wget -O templates.tpz https://github.com/godotengine/godot/releases/download/3.5.3-stable/Godot_v3.5.3-stable_export_templates.tpz
 
-    cp -r templates/* ~/.local/share/godot/templates/3.5.3.stable/
-    
+          mkdir -p ~/.local/share/godot/templates/3.5.3.stable
+
+          unzip templates.tpz
+
+          cp -r templates/* ~/.local/share/godot/templates/3.5.3.stable/
+          
             - name: "⚙️ Criar Export Preset"
           shell: bash
           run: |
@@ -116,8 +117,8 @@ jobs:
           permissions/internet=true
           EOF
 
-        - name: "🏗️ Compilar APK"
-        run: |
+     - name: "🏗️ Compilar APK"
+    run: |
           ./godot \
           --headless \
           --path . \
@@ -125,15 +126,14 @@ jobs:
           ${{ env.BUILD_DIR }}/Player2-Mobile.apk
 
 
-        - name: "📤 Upload APK"
+  - name: "📤 Upload APK"
         uses: actions/upload-artifact@v4
         with:
           name: Player2-Mobile-APK
           path: builds/android/Player2-Mobile.apk
 
 
-
-  release:
+release:
 
     name: "🚀 Release"
 
@@ -166,7 +166,6 @@ jobs:
 
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
 
 
   pipeline_telemetry:
