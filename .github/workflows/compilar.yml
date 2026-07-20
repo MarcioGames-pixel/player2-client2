@@ -1,37 +1,13 @@
 name: "🚀 Player2 Mobile Pipeline"
 
 on:
-  push:
-    branches:
-      - main
-      - master
-    tags:
-      - 'v*'
-
-  pull_request:
-    branches:
-      - main
-
   workflow_dispatch:
-    inputs:
-      build_type:
-        description: "Tipo de compilação"
-        required: true
-        default: "release"
-        type: choice
-        options:
-          - release
-          - debug
-
 
 permissions:
   contents: write
 
-
 env:
   GODOT_VERSION: "3.5.3"
-  EXPORT_NAME: "Player2-Classic-Mobile"
-  PACKAGE_NAME: "com.brickhill.player2"
   BUILD_DIR: "builds/android"
 
 
@@ -74,19 +50,17 @@ jobs:
           -keypass android \
           -dname "CN=Player2,O=BrickHill"
 
-            - name: "⬇️ Baixar Godot"
-    run: |
+
+      - name: "⬇️ Baixar Godot"
+        run: |
           wget -O godot.zip https://github.com/godotengine/godot/releases/download/3.5.3-stable/Godot_v3.5.3-stable_linux_headless.64.zip
-
           unzip godot.zip
-
           mv Godot_v3.5.3-stable_linux_headless.64 godot
-
           chmod +x godot
 
 
-          - name: "⬇️ Baixar Templates Android"
-    run: |
+      - name: "⬇️ Baixar Templates Android"
+        run: |
           wget -O templates.tpz https://github.com/godotengine/godot/releases/download/3.5.3-stable/Godot_v3.5.3-stable_export_templates.tpz
 
           mkdir -p ~/.local/share/godot/templates/3.5.3.stable
@@ -94,54 +68,61 @@ jobs:
           unzip templates.tpz
 
           cp -r templates/* ~/.local/share/godot/templates/3.5.3.stable/
-          
-            - name: "⚙️ Criar Export Preset"
-          shell: bash
-          run: |
+
+
+      - name: "⚙️ Criar Export Preset"
+        shell: bash
+        run: |
           mkdir -p builds/android
 
-          cat > export_presets.cfg <<'EOF'
-          [preset.0]
-          name="Android"
-          platform="Android"
-          runnable=true
-          export_path="builds/android/Player2-Mobile.apk"
+          printf '%s\n' \
+          '[preset.0]' \
+          'name="Android"' \
+          'platform="Android"' \
+          'runnable=true' \
+          'export_path="builds/android/Player2-Mobile.apk"' \
+          '' \
+          '[preset.0.options]' \
+          'package/unique_name="com.brickhill.player2"' \
+          'package/name="Player2"' \
+          'version/code=1' \
+          'version/name="1.0"' \
+          'architectures/armeabi-v7a=true' \
+          'architectures/arm64-v8a=true' \
+          'permissions/internet=true' \
+          > export_presets.cfg
 
-          [preset.0.options]
-          package/unique_name="com.brickhill.player2"
-          package/name="Player2"
-          version/code=1
-          version/name="1.0"
-          architectures/armeabi-v7a=true
-          architectures/arm64-v8a=true
-          permissions/internet=true
-          EOF
 
-     - name: "🏗️ Compilar APK"
-    run: |
+      - name: "🔎 Verificar arquivos"
+        run: |
+          ls -la
+          cat export_presets.cfg
+
+
+      - name: "🏗️ Compilar APK"
+        run: |
           ./godot \
           --headless \
           --path . \
           --export "Android" \
-          ${{ env.BUILD_DIR }}/Player2-Mobile.apk
+          builds/android/Player2-Mobile.apk
 
 
-  - name: "📤 Upload APK"
+      - name: "📤 Upload APK"
         uses: actions/upload-artifact@v4
         with:
           name: Player2-Mobile-APK
           path: builds/android/Player2-Mobile.apk
 
 
-release:
+
+  release:
 
     name: "🚀 Release"
 
     runs-on: ubuntu-latest
 
     needs: build_android
-
-    if: startsWith(github.ref,'refs/tags/') || github.event_name == 'workflow_dispatch'
 
 
     steps:
@@ -157,8 +138,7 @@ release:
         uses: softprops/action-gh-release@v2
 
         with:
-          tag_name: ${{ github.ref_name || 'v1.0.0' }}
-
+          tag_name: v1.0.0
           name: "Player2 Mobile Build"
 
           files: |
@@ -166,6 +146,7 @@ release:
 
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
 
 
   pipeline_telemetry:
@@ -184,11 +165,10 @@ release:
       - name: "📊 Collect Metrics"
 
         run: |
-
           echo "=========================================================="
           echo "       MÉTRICAS DO PIPELINE DO GITHUB ACTIONS             "
           echo "=========================================================="
-          echo "Identificador Único da Execução: ${{ github.run_id }}"
-          echo "Iniciador do Processo do Pipeline: ${{ github.actor }}"
-          echo "Branch/Referência Operada: ${{ github.ref }}"
+          echo "ID: ${{ github.run_id }}"
+          echo "Usuário: ${{ github.actor }}"
+          echo "Ref: ${{ github.ref }}"
           echo "=========================================================="
