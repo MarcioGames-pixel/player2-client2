@@ -75,7 +75,7 @@ jobs:
           -dname "CN=Player2,O=BrickHill"
 
       - name: "⬇️ Baixar Godot"
-       run: |
+     run: |
         wget -O godot.zip https://github.com/godotengine/godot/releases/download/3.5.3-stable/Godot_v3.5.3-stable_linux_headless.64.zip
 
         unzip godot.zip
