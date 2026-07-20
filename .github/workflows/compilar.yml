@@ -74,20 +74,18 @@ jobs:
           -keypass android \
           -dname "CN=Player2,O=BrickHill"
 
-
       - name: "⬇️ Baixar Godot"
-        run: |
-          wget https://downloads.tuxfamily.org/godotengine/${{ env.GODOT_VERSION }}/Godot_v${{ env.GODOT_VERSION }}-stable_linux_headless.64.zip
+       run: |
+        wget -O godot.zip https://github.com/godotengine/godot/releases/download/3.5.3-stable/Godot_v3.5.3-stable_linux_headless.64.zip
 
-          unzip Godot_v${{ env.GODOT_VERSION }}-stable_linux_headless.64.zip
+        unzip godot.zip
 
-          mv Godot_v${{ env.GODOT_VERSION }}-stable_linux_headless.64 godot
+        mv Godot_v3.5.3-stable_linux_headless.64 godot
 
-          chmod +x godot
-
-
-      - name: "⬇️ Templates Android"
-        run: |
+        chmod +x godot
+    
+        -  name: "⬇️ Templates Android"
+          run: |
           wget https://downloads.tuxfamily.org/godotengine/${{ env.GODOT_VERSION }}/Godot_v${{ env.GODOT_VERSION }}-stable_export_templates.tpz
 
           mkdir -p ~/.local/share/godot/templates/${{ env.GODOT_VERSION }}.stable
@@ -119,7 +117,7 @@ jobs:
           permissions/internet=true
           EOF
 
-      - name: "🏗️ Compilar APK"
+        - name: "🏗️ Compilar APK"
         run: |
           ./godot \
           --headless \
@@ -128,7 +126,7 @@ jobs:
           ${{ env.BUILD_DIR }}/Player2-Mobile.apk
 
 
-      - name: "📤 Upload APK"
+        - name: "📤 Upload APK"
         uses: actions/upload-artifact@v4
         with:
           name: Player2-Mobile-APK
