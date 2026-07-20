@@ -54,12 +54,15 @@ jobs:
       - name: "⬇️ Baixar Godot"
         run: |
           wget -O godot.zip https://github.com/godotengine/godot/releases/download/3.5.3-stable/Godot_v3.5.3-stable_linux_headless.64.zip
+
           unzip godot.zip
+
           mv Godot_v3.5.3-stable_linux_headless.64 godot
+
           chmod +x godot
 
 
-      - name: "⬇️ Baixar Templates Android"
+      - name: "⬇️ Templates Android"
         run: |
           wget -O templates.tpz https://github.com/godotengine/godot/releases/download/3.5.3-stable/Godot_v3.5.3-stable_export_templates.tpz
 
@@ -70,37 +73,64 @@ jobs:
           cp -r templates/* ~/.local/share/godot/templates/3.5.3.stable/
 
 
+      - name: "📱 Configurar Android"
+        run: |
+          mkdir -p ~/.config/godot
+
+          cat > ~/.config/godot/editor_settings-3.tres <<EOF
+[gd_resource format=2]
+
+[resource]
+export/android/android_sdk_path = "/usr/local/lib/android/sdk"
+export/android/debug_keystore = "$GITHUB_WORKSPACE/player2.keystore"
+export/android/debug_keystore_user = "player2"
+export/android/debug_keystore_pass = "android"
+EOF
+
+
       - name: "⚙️ Criar Export Preset"
-        shell: bash
+        run: |
+          cat > export_presets.cfg <<EOF
+[preset.0]
+name="Android"
+platform="Android"
+runnable=true
+export_filter="all_resources"
+include_filter=""
+exclude_filter=""
+export_path="builds/android/Player2-Mobile.apk"
+
+[preset.0.options]
+package/unique_name="com.brickhill.player2"
+package/name="Player2"
+
+version/code=1
+version/name="1.0"
+
+architectures/armeabi-v7a=true
+architectures/arm64-v8a=true
+
+permissions/internet=true
+
+keystore/debug="$GITHUB_WORKSPACE/player2.keystore"
+keystore/debug_user="player2"
+keystore/debug_password="android"
+
+keystore/release="$GITHUB_WORKSPACE/player2.keystore"
+keystore/release_user="player2"
+keystore/release_password="android"
+EOF
+
+
+      - name: "🔄 Importar Projeto"
+        run: |
+          ./godot --headless --editor --path . --quit
+
+
+      - name: "🏗️ Exportar APK"
         run: |
           mkdir -p builds/android
 
-          printf '%s\n' \
-          '[preset.0]' \
-          'name="Android"' \
-          'platform="Android"' \
-          'runnable=true' \
-          'export_path="builds/android/Player2-Mobile.apk"' \
-          '' \
-          '[preset.0.options]' \
-          'package/unique_name="com.brickhill.player2"' \
-          'package/name="Player2"' \
-          'version/code=1' \
-          'version/name="1.0"' \
-          'architectures/armeabi-v7a=true' \
-          'architectures/arm64-v8a=true' \
-          'permissions/internet=true' \
-          > export_presets.cfg
-
-
-      - name: "🔎 Verificar arquivos"
-        run: |
-          ls -la
-          cat export_presets.cfg
-
-
-      - name: "🏗️ Compilar APK"
-        run: |
           ./godot \
           --headless \
           --path . \
@@ -140,7 +170,6 @@ jobs:
         with:
           tag_name: v1.0.0
           name: "Player2 Mobile Build"
-
           files: |
             dist/Player2-Mobile.apk
 
