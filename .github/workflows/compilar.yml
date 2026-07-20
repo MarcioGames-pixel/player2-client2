@@ -84,17 +84,16 @@ jobs:
 
         chmod +x godot
     
-        -  name: "⬇️ Templates Android"
-          run: |
-          wget https://downloads.tuxfamily.org/godotengine/${{ env.GODOT_VERSION }}/Godot_v${{ env.GODOT_VERSION }}-stable_export_templates.tpz
+        - name: "⬇️ Baixar Templates Android"
+  run: |
+    wget -O templates.tpz https://github.com/godotengine/godot/releases/download/3.5.3-stable/Godot_v3.5.3-stable_export_templates.tpz
 
-          mkdir -p ~/.local/share/godot/templates/${{ env.GODOT_VERSION }}.stable
+    mkdir -p ~/.local/share/godot/templates/3.5.3.stable
 
-          unzip Godot_v${{ env.GODOT_VERSION }}-stable_export_templates.tpz
+    unzip templates.tpz
 
-          cp -r templates/* ~/.local/share/godot/templates/${{ env.GODOT_VERSION }}.stable/
-
-
+    cp -r templates/* ~/.local/share/godot/templates/3.5.3.stable/
+    
             - name: "⚙️ Criar Export Preset"
           shell: bash
           run: |
