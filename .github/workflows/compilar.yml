@@ -6,9 +6,6 @@ on:
 permissions:
   contents: write
 
-env:
-  GODOT_VERSION: "3.5.3"
-
 
 jobs:
 
@@ -23,7 +20,7 @@ jobs:
         uses: actions/checkout@v4
 
 
-      - name: "☕ Java"
+      - name: "☕ Java 11"
         uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -36,7 +33,7 @@ jobs:
           sudo apt install -y wget unzip lib32stdc++6 lib32z1
 
 
-      - name: "🔐 Keystore"
+      - name: "🔐 Criar Keystore"
         run: |
           keytool -genkeypair \
           -v \
@@ -50,7 +47,7 @@ jobs:
           -dname "CN=Player2,O=BrickHill"
 
 
-      - name: "⬇️ Godot 3.5.3"
+      - name: "⬇️ Baixar Godot"
         run: |
           wget -O godot.zip https://github.com/godotengine/godot/releases/download/3.5.3-stable/Godot_v3.5.3-stable_linux_headless.64.zip
           unzip godot.zip
@@ -65,14 +62,34 @@ jobs:
           mkdir -p ~/.local/share/godot/templates/3.5.3.stable
 
           unzip templates.tpz
-
           cp -r templates/* ~/.local/share/godot/templates/3.5.3.stable/
+
+
+      - name: "📱 Configurar SDK Android"
+        run: |
+          mkdir -p ~/.config/godot
+
+          python3 <<'PY'
+          config = """
+          [gd_resource format=2]
+
+          [resource]
+          export/android/android_sdk_path="/usr/local/lib/android/sdk"
+          """
+
+          open(
+          "/home/runner/.config/godot/editor_settings-3.tres",
+          "w"
+          ).write(config)
+          PY
 
 
       - name: "⚙️ Criar Export Preset"
         run: |
+          mkdir -p builds/android
+
           python3 <<'PY'
-          preset = """[preset.0]
+          cfg = """[preset.0]
           name="Android"
           platform="Android"
           runnable=true
@@ -93,36 +110,16 @@ jobs:
 
           permissions/internet=true
 
-          keystore/debug="$GITHUB_WORKSPACE/player2.keystore"
+          keystore/debug="player2.keystore"
           keystore/debug_user="player2"
           keystore/debug_password="android"
 
-          keystore/release="$GITHUB_WORKSPACE/player2.keystore"
+          keystore/release="player2.keystore"
           keystore/release_user="player2"
           keystore/release_password="android"
-
-          custom_template/debug=""
-          custom_template/release=""
           """
 
-          open("export_presets.cfg","w").write(preset)
-          PY
-
-
-      - name: "📱 Configurar Android SDK"
-        run: |
-          mkdir -p ~/.config/godot
-
-          python3 <<'PY'
-          data = """[gd_resource format=2]
-
-          [resource]
-          export/android/android_sdk_path="/usr/local/lib/android/sdk"
-          """
-          open(
-          "/home/runner/.config/godot/editor_settings-3.tres",
-          "w"
-          ).write(data)
+          open("export_presets.cfg","w").write(cfg)
           PY
 
 
@@ -133,16 +130,14 @@ jobs:
 
       - name: "🏗️ Exportar APK"
         run: |
-          mkdir -p builds/android
-
           ./godot \
           --headless \
           --path . \
-          --export Android \
+          --export "Android" \
           builds/android/Player2-Mobile.apk
 
 
-      - name: "📤 Enviar APK"
+      - name: "📤 Upload APK"
         uses: actions/upload-artifact@v4
         with:
           name: Player2-Mobile-APK
@@ -173,7 +168,7 @@ jobs:
 
         with:
           tag_name: v1.0.0
-          name: Player2 Mobile Build
+          name: "Player2 Mobile Build"
           files: |
             dist/Player2-Mobile.apk
 
@@ -192,6 +187,7 @@ jobs:
 
     if: always()
 
+
     steps:
 
       - name: "📊 Métricas"
@@ -200,5 +196,4 @@ jobs:
           echo "Player2 Mobile Pipeline"
           echo "Run: ${{ github.run_id }}"
           echo "Actor: ${{ github.actor }}"
-          echo "Ref: ${{ github.ref }}"
           echo "=============================="
