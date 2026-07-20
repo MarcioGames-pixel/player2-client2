@@ -8,14 +8,13 @@ permissions:
 
 env:
   GODOT_VERSION: "3.5.3"
-  BUILD_DIR: "builds/android"
 
 
 jobs:
 
   build_android:
 
-    name: "🤖 Build Android APK"
+    name: "🤖 Criar APK Android"
     runs-on: ubuntu-latest
 
     steps:
@@ -24,7 +23,7 @@ jobs:
         uses: actions/checkout@v4
 
 
-      - name: "☕ Java 11"
+      - name: "☕ Java"
         uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -37,7 +36,7 @@ jobs:
           sudo apt install -y wget unzip lib32stdc++6 lib32z1
 
 
-      - name: "🔐 Criar Keystore"
+      - name: "🔐 Keystore"
         run: |
           keytool -genkeypair \
           -v \
@@ -51,7 +50,7 @@ jobs:
           -dname "CN=Player2,O=BrickHill"
 
 
-      - name: "⬇️ Baixar Godot"
+      - name: "⬇️ Godot 3.5.3"
         run: |
           wget -O godot.zip https://github.com/godotengine/godot/releases/download/3.5.3-stable/Godot_v3.5.3-stable_linux_headless.64.zip
           unzip godot.zip
@@ -59,20 +58,21 @@ jobs:
           chmod +x godot
 
 
-      - name: "⬇️ Baixar Templates Android"
+      - name: "⬇️ Templates Android"
         run: |
           wget -O templates.tpz https://github.com/godotengine/godot/releases/download/3.5.3-stable/Godot_v3.5.3-stable_export_templates.tpz
+
           mkdir -p ~/.local/share/godot/templates/3.5.3.stable
+
           unzip templates.tpz
+
           cp -r templates/* ~/.local/share/godot/templates/3.5.3.stable/
 
 
       - name: "⚙️ Criar Export Preset"
         run: |
-          mkdir -p builds/android
-
-          python3 - <<'PY'
-          data = """[preset.0]
+          python3 <<'PY'
+          preset = """[preset.0]
           name="Android"
           platform="Android"
           runnable=true
@@ -84,33 +84,65 @@ jobs:
           [preset.0.options]
           package/unique_name="com.brickhill.player2"
           package/name="Player2"
+
           version/code=1
           version/name="1.0"
+
           architectures/armeabi-v7a=true
           architectures/arm64-v8a=true
+
           permissions/internet=true
+
+          keystore/debug="$GITHUB_WORKSPACE/player2.keystore"
+          keystore/debug_user="player2"
+          keystore/debug_password="android"
+
+          keystore/release="$GITHUB_WORKSPACE/player2.keystore"
+          keystore/release_user="player2"
+          keystore/release_password="android"
+
+          custom_template/debug=""
+          custom_template/release=""
           """
 
-          with open("export_presets.cfg", "w") as f:
-              f.write(data)
+          open("export_presets.cfg","w").write(preset)
+          PY
+
+
+      - name: "📱 Configurar Android SDK"
+        run: |
+          mkdir -p ~/.config/godot
+
+          python3 <<'PY'
+          data = """[gd_resource format=2]
+
+          [resource]
+          export/android/android_sdk_path="/usr/local/lib/android/sdk"
+          """
+          open(
+          "/home/runner/.config/godot/editor_settings-3.tres",
+          "w"
+          ).write(data)
           PY
 
 
       - name: "🔄 Importar Projeto"
         run: |
-          ./godot --headless --editor --path . --quit
+          ./godot --headless --editor --path . --quit || true
 
 
-      - name: "🏗️ Compilar APK"
+      - name: "🏗️ Exportar APK"
         run: |
+          mkdir -p builds/android
+
           ./godot \
           --headless \
           --path . \
-          --export "Android" \
+          --export Android \
           builds/android/Player2-Mobile.apk
 
 
-      - name: "📤 Upload APK"
+      - name: "📤 Enviar APK"
         uses: actions/upload-artifact@v4
         with:
           name: Player2-Mobile-APK
@@ -121,7 +153,9 @@ jobs:
   release:
 
     name: "🚀 Release"
+
     runs-on: ubuntu-latest
+
     needs: build_android
 
 
@@ -136,9 +170,10 @@ jobs:
 
       - name: "🚀 Criar Release"
         uses: softprops/action-gh-release@v2
+
         with:
           tag_name: v1.0.0
-          name: "Player2 Mobile Build"
+          name: Player2 Mobile Build
           files: |
             dist/Player2-Mobile.apk
 
@@ -157,16 +192,13 @@ jobs:
 
     if: always()
 
-
     steps:
 
-      - name: "📊 Collect Metrics"
-
+      - name: "📊 Métricas"
         run: |
-          echo "=========================================================="
-          echo "       MÉTRICAS DO PIPELINE DO GITHUB ACTIONS"
-          echo "=========================================================="
-          echo "ID: ${{ github.run_id }}"
-          echo "Usuário: ${{ github.actor }}"
+          echo "=============================="
+          echo "Player2 Mobile Pipeline"
+          echo "Run: ${{ github.run_id }}"
+          echo "Actor: ${{ github.actor }}"
           echo "Ref: ${{ github.ref }}"
-          echo "=========================================================="
+          echo "=============================="
