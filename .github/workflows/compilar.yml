@@ -104,8 +104,8 @@ jobs:
           cp -r templates_temp/templates/* \
           ~/.local/share/godot/templates/3.6.stable/
 
-                - name: ⚙️ Configurar Godot
-          run: |
+      - name: ⚙️ Configurar Godot
+        run: |
           mkdir -p ~/.config/godot
 
           cat > ~/.config/godot/editor_settings-3.tres <<EOF
