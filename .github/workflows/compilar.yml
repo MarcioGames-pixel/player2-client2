@@ -12,6 +12,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
+      GODOT_VERSION: 3.6-stable
       ANDROID_SDK_ROOT: ${{ github.workspace }}/android-sdk
       ANDROID_HOME: ${{ github.workspace }}/android-sdk
 
@@ -19,77 +20,91 @@ jobs:
       - name: 📥 Checkout
         uses: actions/checkout@v4
 
-      - name: ☕ Java 17
+      - name: ☕ Configurar Java 17
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 17
 
-      - name: 📦 Dependências
+      - name: 📦 Instalar dependências
         run: |
           sudo apt update
-          sudo apt install -y wget unzip zip xvfb
+          sudo apt install -y \
+            wget \
+            unzip \
+            zip \
+            xvfb
 
       - name: 📱 Instalar Android SDK
         run: |
-          mkdir -p $ANDROID_SDK_ROOT/cmdline-tools
+          mkdir -p "$ANDROID_SDK_ROOT/cmdline-tools"
 
-          wget -O sdk.zip \
-          https://dl.google.com/android/repository/commandlinetools-linux-13114758_latest.zip
+          wget -q \
+          https://dl.google.com/android/repository/commandlinetools-linux-13114758_latest.zip \
+          -O sdk.zip
 
-          unzip sdk.zip
+          unzip -q sdk.zip
 
-          mkdir -p $ANDROID_SDK_ROOT/cmdline-tools/latest
+          mkdir -p "$ANDROID_SDK_ROOT/cmdline-tools/latest"
 
           mv cmdline-tools/* \
-          $ANDROID_SDK_ROOT/cmdline-tools/latest/
+          "$ANDROID_SDK_ROOT/cmdline-tools/latest/"
 
-      - name: 🔧 Instalar Build Tools
+          echo "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin" >> $GITHUB_PATH
+
+      - name: 🔧 Instalar SDK Components
         run: |
           export PATH=$ANDROID_SDK_ROOT/cmdline-tools/latest/bin:$PATH
 
-          yes | sdkmanager --sdk_root=$ANDROID_SDK_ROOT --licenses
+          yes | sdkmanager --sdk_root="$ANDROID_SDK_ROOT" --licenses
 
-          sdkmanager --sdk_root=$ANDROID_SDK_ROOT \
+          sdkmanager --sdk_root="$ANDROID_SDK_ROOT" \
             "platform-tools" \
-            "platforms;android-31" \
-            "build-tools;31.0.0"
+            "platforms;android-34" \
+            "build-tools;34.0.0"
 
-      - name: 🔐 Criar Keystore
+          sdkmanager --sdk_root="$ANDROID_SDK_ROOT" --list
+
+      - name: 🔍 Verificar SDK
         run: |
-          keytool -genkeypair \
-          -v \
-          -keystore player2.keystore \
-          -alias player2 \
-          -keyalg RSA \
-          -keysize 2048 \
-          -validity 10000 \
-          -storepass android \
-          -keypass android \
-          -dname "CN=Player2,O=BrickHill"
+          echo "ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT"
+          find "$ANDROID_SDK_ROOT" -maxdepth 3
 
-      - name: ⬇️ Baixar Godot
+      - name: 🔐 Criar Debug Keystore
+        run: |
+          keytool \
+            -genkeypair \
+            -alias androiddebugkey \
+            -keystore debug.keystore \
+            -storepass android \
+            -keypass android \
+            -keyalg RSA \
+            -keysize 2048 \
+            -validity 10000 \
+            -dname "CN=Android Debug,O=Android,C=US"
+
+      - name: ⬇️ Baixar Godot 3.6
         run: |
           wget -O godot.zip \
-          https://github.com/godotengine/godot/releases/download/3.5.3-stable/Godot_v3.5.3-stable_linux_headless.64.zip
+          https://github.com/godotengine/godot/releases/download/3.6-stable/Godot_v3.6-stable_linux_headless.64.zip
 
           unzip godot.zip
-          mv Godot_v3.5.3-stable_linux_headless.64 godot
-          chmod +x godot
 
-      - name: ⬇️ Templates
+          chmod +x Godot_v3.6-stable_linux_headless.64
+
+      - name: ⬇️ Baixar Export Templates
         run: |
           wget -O templates.tpz \
-          https://github.com/godotengine/godot/releases/download/3.5.3-stable/Godot_v3.5.3-stable_export_templates.tpz
+          https://github.com/godotengine/godot/releases/download/3.6-stable/Godot_v3.6-stable_export_templates.tpz
 
-          mkdir -p ~/.local/share/godot/templates/3.5.3.stable
+          mkdir -p ~/.local/share/godot/templates/3.6.stable
 
-          unzip -o templates.tpz -d temp
+          unzip -o templates.tpz -d templates_temp
 
-          cp -r temp/templates/* \
-          ~/.local/share/godot/templates/3.5.3.stable/
+          cp -r templates_temp/templates/* \
+          ~/.local/share/godot/templates/3.6.stable/
 
-      - name: ⚙️ Configurar Godot
+                - name: ⚙️ Configurar Godot
         run: |
           mkdir -p ~/.config/godot
 
@@ -100,19 +115,28 @@ jobs:
           export/android/android_sdk_path="$ANDROID_SDK_ROOT"
           EOF
 
-      - name: ⚙️ Criar Export Preset
-        run: |
-          mkdir -p builds/android
+          cat ~/.config/godot/editor_settings-3.tres
 
+      - name: 📋 Verificar Projeto
+        run: |
+          ls -la
+          test -f project.godot
+
+      - name: 📄 Criar export_presets.cfg
+        run: |
           cat > export_presets.cfg <<EOF
           [preset.0]
+
           name="Android"
           platform="Android"
           runnable=true
           export_filter="all_resources"
+          include_filter=""
+          exclude_filter=""
           export_path="builds/android/Player2-Mobile.apk"
 
           [preset.0.options]
+
           package/name="Player2"
           package/unique_name="com.brickhill.player2"
 
@@ -124,26 +148,41 @@ jobs:
 
           permissions/internet=true
 
-          keystore/debug="player2.keystore"
-          keystore/debug_user="player2"
+          keystore/debug="debug.keystore"
+          keystore/debug_user="androiddebugkey"
           keystore/debug_password="android"
 
-          keystore/release="player2.keystore"
-          keystore/release_user="player2"
+          keystore/release="debug.keystore"
+          keystore/release_user="androiddebugkey"
           keystore/release_password="android"
           EOF
 
+      - name: 📁 Criar pasta de saída
+        run: |
+          mkdir -p builds/android
+
       - name: 🔄 Importar Projeto
         run: |
-          xvfb-run -a ./godot --editor --path . --quit || true
+          xvfb-run -a \
+          ./Godot_v3.6-stable_linux_headless.64 \
+          --editor \
+          --path . \
+          --quit || true
 
       - name: 🏗️ Exportar APK
         run: |
-          xvfb-run -a ./godot \
+          xvfb-run -a \
+          ./Godot_v3.6-stable_linux_headless.64 \
           --headless \
+          --verbose \
           --path . \
           --export-debug "Android" \
           builds/android/Player2-Mobile.apk
+
+      - name: 📦 Verificar APK
+        run: |
+          ls -lh builds/android/
+          test -f builds/android/Player2-Mobile.apk
 
       - name: 📤 Upload APK
         uses: actions/upload-artifact@v4
@@ -151,35 +190,44 @@ jobs:
           name: Player2-Mobile-APK
           path: builds/android/Player2-Mobile.apk
 
-  release:
-    name: 🚀 Release
+            release:
+    name: "🚀 Release"
     runs-on: ubuntu-latest
     needs: build_android
 
     steps:
-      - uses: actions/download-artifact@v4
+      - name: 📥 Baixar APK
+        uses: actions/download-artifact@v4
         with:
           name: Player2-Mobile-APK
           path: dist
 
-      - uses: softprops/action-gh-release@v2
+      - name: 🚀 Criar Release
+        uses: softprops/action-gh-release@v2
         with:
           tag_name: build-${{ github.run_number }}
-          name: Player2 Mobile Build
-          files: dist/Player2-Mobile.apk
+          name: Player2 Mobile Build ${{ github.run_number }}
+          generate_release_notes: true
+          files: |
+            dist/Player2-Mobile.apk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   pipeline_telemetry:
-    name: 📊 Pipeline Telemetry
+    name: "📊 Pipeline Telemetry"
     runs-on: ubuntu-latest
     needs: release
     if: always()
 
     steps:
-      - run: |
-          echo "=============================="
-          echo "Player2 Mobile Pipeline"
-          echo "Run: ${{ github.run_id }}"
+      - name: 📊 Informações da Pipeline
+        run: |
+          echo "========================================"
+          echo "🚀 Player2 Mobile Pipeline"
+          echo "Run ID: ${{ github.run_id }}"
+          echo "Run Number: ${{ github.run_number }}"
           echo "Actor: ${{ github.actor }}"
-          echo "=============================="
+          echo "Repository: ${{ github.repository }}"
+          echo "Ref: ${{ github.ref }}"
+          echo "SHA: ${{ github.sha }}"
+          echo "========================================"
