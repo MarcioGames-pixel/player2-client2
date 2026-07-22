@@ -42,7 +42,7 @@ jobs:
 
       - name: 📱 Instalar Android SDK
         run: |
-          mkdir -p $ANDROID_SDK_ROOT/cmdline-tools
+          mkdir -p "$ANDROID_SDK_ROOT/cmdline-tools"
 
           wget -q \
           https://dl.google.com/android/repository/commandlinetools-linux-13114758_latest.zip \
@@ -50,24 +50,24 @@ jobs:
 
           unzip -q sdk.zip
 
-          mkdir -p $ANDROID_SDK_ROOT/cmdline-tools/latest
+          mkdir -p "$ANDROID_SDK_ROOT/cmdline-tools/latest"
 
           mv cmdline-tools/* \
-          $ANDROID_SDK_ROOT/cmdline-tools/latest/
+          "$ANDROID_SDK_ROOT/cmdline-tools/latest/"
 
           echo "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin" >> $GITHUB_PATH
 
 
-      - name: 🔧 Instalar ferramentas Android
+      - name: 🔧 Instalar SDK Android
         run: |
-          export PATH=$ANDROID_SDK_ROOT/cmdline-tools/latest/bin:$PATH
+          export PATH="$ANDROID_SDK_ROOT/cmdline-tools/latest/bin:$PATH"
 
           yes | sdkmanager \
-          --sdk_root=$ANDROID_SDK_ROOT \
+          --sdk_root="$ANDROID_SDK_ROOT" \
           --licenses
 
           sdkmanager \
-          --sdk_root=$ANDROID_SDK_ROOT \
+          --sdk_root="$ANDROID_SDK_ROOT" \
           "platform-tools" \
           "platforms;android-34" \
           "build-tools;34.0.0"
@@ -89,20 +89,23 @@ jobs:
 
       - name: ⬇️ Baixar Godot 4.2.2
         run: |
-          wget -O godot.zip \
-          https://github.com/godotengine/godot/releases/download/4.2.2-stable/Godot_v4.2.2-stable_linux_headless.64.zip
+          wget -q \
+          https://github.com/godotengine/godot/releases/download/4.2.2-stable/Godot_v4.2.2-stable_linux.x86_64.zip \
+          -O godot.zip
 
           unzip -q godot.zip
 
-          chmod +x Godot_v4.2.2-stable_linux_headless.64
+          chmod +x Godot_v4.2.2-stable_linux.x86_64
 
 
-      - name: ⬇️ Export Templates
+      - name: ⬇️ Instalar Templates Godot
         run: |
-          wget -O templates.tpz \
-          https://github.com/godotengine/godot/releases/download/4.2.2-stable/Godot_v4.2.2-stable_export_templates.tpz
+          wget -q \
+          https://github.com/godotengine/godot/releases/download/4.2.2-stable/Godot_v4.2.2-stable_export_templates.tpz \
+          -O templates.tpz
 
-          mkdir -p ~/.local/share/godot/export_templates/4.2.stable
+          mkdir -p \
+          ~/.local/share/godot/export_templates/4.2.stable
 
           unzip -q templates.tpz -d templates
 
@@ -129,7 +132,7 @@ jobs:
           test -f project.godot
 
 
-      - name: 📁 Criar saída
+      - name: 📁 Criar pasta APK
         run: |
           mkdir -p builds/android
 
@@ -137,7 +140,7 @@ jobs:
       - name: 🔄 Importar projeto
         run: |
           xvfb-run -a \
-          ./Godot_v4.2.2-stable_linux_headless.64 \
+          ./Godot_v4.2.2-stable_linux.x86_64 \
           --headless \
           --editor \
           --path . \
@@ -147,7 +150,7 @@ jobs:
       - name: 🏗️ Exportar APK
         run: |
           xvfb-run -a \
-          ./Godot_v4.2.2-stable_linux_headless.64 \
+          ./Godot_v4.2.2-stable_linux.x86_64 \
           --headless \
           --path . \
           --export-debug \
@@ -155,7 +158,7 @@ jobs:
           builds/android/Player2-Mobile.apk
 
 
-      - name: 📦 Verificar APK
+      - name: 📦 Ver APK
         run: |
           ls -lh builds/android/
 
