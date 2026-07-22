@@ -105,7 +105,7 @@ jobs:
           ~/.local/share/godot/templates/3.6.stable/
 
                 - name: ⚙️ Configurar Godot
-        run: |
+          run: |
           mkdir -p ~/.config/godot
 
           cat > ~/.config/godot/editor_settings-3.tres <<EOF
@@ -190,7 +190,7 @@ jobs:
           name: Player2-Mobile-APK
           path: builds/android/Player2-Mobile.apk
 
-            release:
+  release:
     name: "🚀 Release"
     runs-on: ubuntu-latest
     needs: build_android
