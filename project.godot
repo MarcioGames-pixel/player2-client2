@@ -125,7 +125,7 @@ BrickHill="*res://singletons/brick_hill.gd"
 Loader="*res://singletons/loader.gd"
 NetID="*res://singletons/net_id.gd"
 Util="*res://singletons/util.gd"
-AssetCache="*res://singletons/asset_cache.gd""
+AssetCache="*res://singletons/asset_cache.gd"
 
 [display]
 
